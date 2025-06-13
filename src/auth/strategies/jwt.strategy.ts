@@ -12,10 +12,11 @@ import jwtConfig from '../config/jwtConfig';
 import { UsersService } from 'src/users/providers/users.service';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy) {
+export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
-    @Inject(jwtConfig.KEY)
-    private readonly jwtConfigurations: ConfigType<typeof jwtConfig>,
+    // @Inject(jwtConfig.KEY)
+    // private readonly jwtConfigurations: ConfigType<typeof jwtConfig>,
+    private readonly configService: ConfigService,
 
     @Inject(forwardRef(() => UsersService))
     private readonly usersService: UsersService,
@@ -23,13 +24,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: jwtConfigurations.secret,
-      issuer: jwtConfigurations.issuer,
-      audience: jwtConfigurations.audience,
+      secretOrKey: configService.get<string>('JWT_SECRET'),
     });
+    console.log(configService.get('JWT_SECRET'));
+    console.log(this.configService.get('JWT_SECRET'));
   }
 
   async validate(payload: any) {
+    console.log(payload);
     return await this.usersService.findUserById(payload.sub);
   }
 }

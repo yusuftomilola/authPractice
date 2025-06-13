@@ -21,9 +21,7 @@ export class GenerateTokensProvider {
         ...payload,
       },
       {
-        audience: this.configService.get('JWT_TOKEN_AUDIENCE'),
-        issuer: this.configService.get('JWT_TOKEN_ISSUER'),
-        secret: this.configService.get('JWT_SECRET'),
+        secret: this.configService.get<string>('JWT_SECRET'),
         expiresIn,
       },
     );
