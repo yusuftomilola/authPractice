@@ -1,7 +1,7 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthService } from './providers/auth.service';
 import { UsersService } from 'src/users/providers/users.service';
-import { IsPublic } from './decorators/public.decorator';
+import { Public } from './decorators/public.decorator';
 import { LocalAuthGuard } from './guards/localAuth.guard';
 import { CreateUserDto } from 'src/users/dto/createUser.dto';
 import { GetCurrentUser } from './decorators/getCurrentUser.decorator';
@@ -15,18 +15,20 @@ export class AuthController {
     private readonly usersService: UsersService,
   ) {}
 
-  @IsPublic()
+  @Public()
   @UseGuards(LocalAuthGuard)
   @Post('login')
   async loginUser(
     // @Request() req: Express.Request,
-    // @Req() req: Request
+    @Request() req,
     @GetCurrentUser() user: User,
   ) {
+    console.log('The request is:', req);
+    console.log('The user is:', user);
     return await this.authService.loginUser(user);
   }
 
-  @IsPublic()
+  @Public()
   @Post('register')
   async createUser(@Body() createUserDto: CreateUserDto) {
     console.log(createUserDto);

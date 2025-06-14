@@ -8,9 +8,12 @@ import { HashingProvider } from './providers/hashing.provider';
 import { BrcyptProvider } from './providers/bcrypt.provider';
 import { UsersModule } from 'src/users/users.module';
 import { JwtStrategy } from './strategies/jwt.strategy';
-import { LocalStrategy } from './strategies/local.stratgey';
+import { LocalStrategy } from './strategies/local.strategy';
 import { GenerateTokensProvider } from './providers/generateTokens.provider';
 import jwtConfig from './config/jwtConfig';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './guards/jwtAuth.guard';
+import { RolesGuard } from './guards/roles.guard';
 
 @Module({
   imports: [
@@ -20,7 +23,7 @@ import jwtConfig from './config/jwtConfig';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
-        secret: configService.get('JWT_SECRET'),
+        secret: configService.get<string>('JWT_SECRET'),
         signOptions: {
           expiresIn: configService.get('JWT_ACCESS_TOKEN_TTL'),
         },
@@ -31,13 +34,18 @@ import jwtConfig from './config/jwtConfig';
   controllers: [AuthController],
   providers: [
     AuthService,
+    JwtStrategy,
+    LocalStrategy,
     {
       provide: HashingProvider,
       useClass: BrcyptProvider,
     },
-    JwtStrategy,
-    LocalStrategy,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
     GenerateTokensProvider,
+    RolesGuard,
   ],
   exports: [HashingProvider, AuthService],
 })

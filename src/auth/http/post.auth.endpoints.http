@@ -3,17 +3,24 @@ POST http://localhost:4000/auth/register
 Content-Type: application/json
 
 {
-    "firstName": "Hassan",
-    "lastName": "olowo eko",
-    "email": "olowo001@gmail.com",
+    "firstName": "Tomilola",
+    "lastName": "Adebisi",
+    "email": "tomilola@gmail.com",
     "password": "jdfejilf34u3hjwfe"
 }
+
+// {
+//     "firstName": "Hassan",
+//     "lastName": "olowo eko",
+//     "email": "olowo001@gmail.com",
+//     "password": "jdfejilf34u3hjwfe"
+// }
 
 # LOGIN USER
 POST http://localhost:4000/auth/login
 Content-Type: application/json
 
 {
-    "email": "olowo001@gmail.com",
+    "email": "tomilola@gmail.com",
     "password": "jdfejilf34u3hjwfe"
 }

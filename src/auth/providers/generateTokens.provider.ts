@@ -13,15 +13,17 @@ export class GenerateTokensProvider {
   public async signSingleToken(
     userId: string,
     expiresIn: number,
+    userRole: string,
     payload?: any,
   ) {
     return await this.jwtService.signAsync(
       {
         sub: userId,
+        role: userRole,
         ...payload,
       },
       {
-        secret: this.configService.get<string>('JWT_SECRET'),
+        secret: process.env.JWT_SECRET,
         expiresIn,
       },
     );
@@ -32,6 +34,7 @@ export class GenerateTokensProvider {
       this.signSingleToken(
         user.id,
         this.configService.get('JWT_ACCESS_TOKEN_TTL'),
+        user.role,
         {
           email: user.email,
         },
@@ -39,6 +42,7 @@ export class GenerateTokensProvider {
       this.signSingleToken(
         user.id,
         this.configService.get('JWT_REFRESH_TOKEN_TTL'),
+        user.role,
       ),
     ]);
 

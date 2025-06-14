@@ -14,6 +14,14 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   }
 
   canActivate(context: ExecutionContext) {
+    const request = context.switchToHttp().getRequest();
+    const authHeader = request.headers.authorization;
+
+    console.log(
+      'JWT Guard - Authorization header:',
+      authHeader ? 'Present' : 'Missing',
+    );
+
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
       context.getClass(),
@@ -21,6 +29,13 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
     if (isPublic) {
       return true;
+    }
+
+    if (authHeader) {
+      console.log(
+        'JWT Guard - Token format check:',
+        authHeader.startsWith('Bearer ') ? 'Valid' : 'Invalid',
+      );
     }
 
     return super.canActivate(context);
